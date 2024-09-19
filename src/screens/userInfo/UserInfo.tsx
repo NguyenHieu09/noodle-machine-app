@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../../../App';
+// import { RootStackParamList } from '../../../App';
+import { RootStackParamList } from '../../navigation/RootNavigator';
 import { app } from '../../../firebaseConfig'; // Import the Firebase app
 
 type UserInfoRouteProp = RouteProp<RootStackParamList, 'UserInfo'>;

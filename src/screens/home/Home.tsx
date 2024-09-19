@@ -3,7 +3,8 @@ import React from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import UserScanner from '../../components/userScanner/UserScanner';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from '../../../App';
+// import { RootStackParamList } from '../../../App';
+import { RootStackParamList } from '../../navigation/RootNavigator';
 import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 import { app } from '../../../firebaseConfig';
 
