@@ -1,17 +1,18 @@
 // src/screens/home/Home.tsx
-import React from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import UserScanner from '../../components/userScanner/UserScanner';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
-// import { RootStackParamList } from '../../../App';
 import { RootStackParamList } from '../../navigation/RootNavigator';
 import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 import { app } from '../../../firebaseConfig';
 
 const Home: React.FC = () => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+    const [loading, setLoading] = useState(false);
 
     const handleScanSuccess = async (data: string) => {
+        setLoading(true);
         try {
             const qrData = JSON.parse(data);
 
@@ -48,12 +49,18 @@ const Home: React.FC = () => {
         } catch (error) {
             console.error('Error processing QR data:', error);
             Alert.alert('Lỗi', 'Có lỗi xảy ra khi xử lý dữ liệu');
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
         <View style={styles.container}>
-            <UserScanner onScanSuccess={handleScanSuccess} />
+            {loading ? (
+                <ActivityIndicator size="large" color="#0000ff" />
+            ) : (
+                <UserScanner onScanSuccess={handleScanSuccess} />
+            )}
         </View>
     );
 };
