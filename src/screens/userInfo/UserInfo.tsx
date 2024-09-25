@@ -5,6 +5,10 @@ import { NavigationProp, RouteProp, useNavigation } from '@react-navigation/nati
 import { RootStackParamList } from '../../navigation/RootNavigator';
 import { app } from '../../../firebaseConfig'; // Import the Firebase app
 import { LinearGradient } from 'expo-linear-gradient';
+import { useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/src/redux-toolkit/store';
+import { useDispatch } from 'react-redux';
+import { fetchUserById, updateUserCupNoodles } from '@/src/redux-toolkit/slices/userSlice';
 
 type UserInfoRouteProp = RouteProp<RootStackParamList, 'UserInfo'>;
 
@@ -15,28 +19,35 @@ interface UserInfoProps {
 const UserInfo: React.FC<UserInfoProps> = ({ route }) => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const { userId } = route.params;
-    const [userInfo, setUserInfo] = useState<any>(null);
-    const [selectedIndices, setSelectedIndices] = useState<number[]>([]); // Mảng trạng thái của các ảnh được chọn
+    const dispatch = useDispatch<AppDispatch>();
+    const userInfo = useSelector((state: RootState) => state.user.userInfo);
+    const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
+    const [selectedCups, setSelectedCups] = useState<number>(0);
+    const updateStatus = useSelector((state: RootState) => state.user.status);
 
     const handlePress = (index: number) => {
         setSelectedIndices(prevIndices =>
             prevIndices.includes(index)
-                ? prevIndices.filter(i => i !== index) // Bỏ chọn nếu đã được chọn
-                : [...prevIndices, index] // Thêm vào mảng nếu chưa được chọn
+                ? prevIndices.filter(i => i !== index)
+                : [...prevIndices, index]
+        );
+
+        setSelectedCups(prevCups =>
+            selectedIndices.includes(index) ? prevCups - 1 : prevCups + 1
         );
     };
 
-    useEffect(() => {
-        const fetchUserInfo = async () => {
-            const firestore = getFirestore(app); // Initialize Firestore
-            const userDoc = await getDoc(doc(firestore, 'users', userId));
-            if (userDoc.exists()) {
-                setUserInfo(userDoc.data());
-            }
-        };
+    const handleGetNoodles = () => {
+        if (selectedCups > 0) {
+            dispatch(updateUserCupNoodles({ userId, cupsToBuy: selectedCups }));
+            navigation.navigate('Done');
+        }
+    };
 
-        fetchUserInfo();
-    }, [userId]);
+    useEffect(() => {
+        console.log(userId);
+        dispatch(fetchUserById(userId));
+    }, [dispatch, userId]);
 
     if (!userInfo) {
         return (
@@ -79,7 +90,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ route }) => {
                                 <Text style={styles.infoBold}>Phòng ban:</Text>
                             </View>
                             <View style={styles.column}>
-                                {/* Thêm nội dung khác nếu cần */}
                                 <Text style={styles.info}>{userInfo.fullName}</Text>
                                 <Text style={styles.info}>{userInfo.birthday}</Text>
                                 <Text style={styles.info}>{userInfo.gender}</Text>
@@ -91,7 +101,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ route }) => {
 
                 <View style={styles.infomation}>
                     <View style={styles.column}>
-                        {/* Hình ảnh đầu tiên */}
                         <TouchableOpacity onPress={() => handlePress(0)}>
                             <View style={styles.imageContainer}>
                                 {selectedIndices.includes(0) && (
@@ -111,7 +120,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ route }) => {
                     </View>
 
                     <View style={styles.column}>
-                        {/* Hình ảnh thứ hai */}
                         <TouchableOpacity onPress={() => handlePress(1)}>
                             <View style={styles.imageContainer}>
                                 {selectedIndices.includes(1) && (
@@ -131,7 +139,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ route }) => {
                     </View>
 
                     <View style={styles.column}>
-                        {/* Hình ảnh thứ ba */}
                         <TouchableOpacity onPress={() => handlePress(2)}>
                             <View style={styles.imageContainer}>
                                 {selectedIndices.includes(2) && (
@@ -154,10 +161,10 @@ const UserInfo: React.FC<UserInfoProps> = ({ route }) => {
 
             <View style={styles.centeredContainer}>
                 <Text style={styles.number}>
-                    <Text style={styles.redNumber}>3</Text>
+                    <Text style={styles.cupNoodles}>{userInfo.cupNoodles}</Text>
                     <Text style={styles.grayText}> cups of noodles left this month</Text>
                 </Text>
-                <TouchableOpacity style={styles.button}  onPress={() => navigation.navigate('Done')}>
+                <TouchableOpacity style={styles.button} onPress={handleGetNoodles}>
                     <LinearGradient
                         colors={['#FFB706', '#FF7506']}
                         start={{ x: 0, y: 0 }}
@@ -171,7 +178,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ route }) => {
         </ImageBackground>
     );
 };
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -237,7 +243,7 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
     },
-    
+
     welcomeText: {
         fontSize: 35,
         fontWeight: 'bold',
@@ -249,7 +255,7 @@ const styles = StyleSheet.create({
         marginBottom: 30,
         fontWeight: 'bold',
     },
-    redNumber: {
+    cupNoodles: {
         color: 'red',
     },
     grayText: {
@@ -278,7 +284,7 @@ const styles = StyleSheet.create({
     imageContainer: {
         position: 'relative',
         justifyContent: 'center',  // Căn giữa theo chiều dọc
-        alignItems: 'center',  
+        alignItems: 'center',
     },
 });
 

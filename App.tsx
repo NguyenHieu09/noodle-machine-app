@@ -16,16 +16,16 @@ const App: React.FC = () => {
 export default App;
 
 
-// // import React from 'react';
-// // import { View } from 'react-native';
-// // import GenerateQRCode from './src/components/GenerateQRCode/GenerateQRCode';
+// import React from 'react';
+// import { View } from 'react-native';
+// import GenerateQRCode from './src/components/generateQRCode/GenerateQRCode';
 
-// // const App = () => {
-// //   return (
-// //     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-// //       <GenerateQRCode />
-// //     </View>
-// //   );
-// // };
+// const App = () => {
+//   return (
+//     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+//       <GenerateQRCode />
+//     </View>
+//   );
+// };
 
-// // export default App;
+// export default App;

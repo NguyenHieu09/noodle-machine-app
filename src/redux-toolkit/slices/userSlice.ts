@@ -1,7 +1,6 @@
-// slices/userSlice.ts
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { firestore } from '../../../firebaseConfig';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where, updateDoc, doc, getDoc } from 'firebase/firestore';
 
 // Định nghĩa kiểu dữ liệu cho thông tin người dùng
 interface UserInfo {
@@ -9,6 +8,7 @@ interface UserInfo {
     birthday: string;
     gender: string;
     department: string;
+    cupNoodles: number; // Số ly mì còn lại của người dùng
 }
 
 // Định nghĩa kiểu dữ liệu cho trạng thái của người dùng
@@ -30,18 +30,52 @@ export const fetchUserById = createAsyncThunk(
     'user/fetchUserById',
     async (userId: string, { rejectWithValue }) => {
         try {
-            const q = query(collection(firestore, 'users'), where('id', '==', userId));
-            const querySnapshot = await getDocs(q);
-            const userData = querySnapshot.docs.map(doc => doc.data());
+            console.log('Fetching user with ID:', userId); // Log userId
+            const userDocRef = doc(firestore, 'users', userId);
+            const userDoc = await getDoc(userDocRef);
 
-            // Kiểm tra nếu không tìm thấy người dùng và ném lỗi
-            if (userData.length === 0) {
+            if (!userDoc.exists()) {
                 return rejectWithValue('No user found with the given ID');
             }
 
-            return userData[0] as UserInfo;
+            const userData = userDoc.data() as UserInfo;
+            console.log('User data:', userData); // Log user data
+
+            return userData;
         } catch (error) {
+            console.error('Error fetching user:', error); // Log error
             return rejectWithValue('Failed to fetch user information');
+        }
+    }
+);
+
+// Tạo một async thunk để cập nhật số ly mì sau khi mua
+export const updateUserCupNoodles = createAsyncThunk(
+    'user/updateUserCupNoodles',
+    async ({ userId, cupsToBuy }: { userId: string; cupsToBuy: number }, { rejectWithValue }) => {
+        try {
+            const userDocRef = doc(firestore, 'users', userId);
+            const userDoc = await getDoc(userDocRef);
+
+            if (!userDoc.exists()) {
+                return rejectWithValue('User not found');
+            }
+
+            const userData = userDoc.data() as UserInfo;
+            const newCupNoodles = userData.cupNoodles - cupsToBuy;
+
+            // Kiểm tra xem người dùng có đủ ly mì để mua không
+            if (newCupNoodles < 0) {
+                return rejectWithValue('Not enough cup noodles available');
+            }
+
+            // Cập nhật số lượng ly mì mới
+            await updateDoc(userDocRef, { cupNoodles: newCupNoodles });
+
+            return { ...userData, cupNoodles: newCupNoodles };
+        } catch (error) {
+            console.error('Error updating user cup noodles:', error);
+            return rejectWithValue('Failed to update cup noodles');
         }
     }
 );
@@ -63,7 +97,19 @@ const userSlice = createSlice({
             })
             .addCase(fetchUserById.rejected, (state, action) => {
                 state.status = 'failed';
-                state.error = action.payload as string; // Lấy thông điệp lỗi từ action.payload
+                state.error = action.payload as string;
+            })
+            .addCase(updateUserCupNoodles.pending, (state) => {
+                state.status = 'loading';
+                state.error = null;
+            })
+            .addCase(updateUserCupNoodles.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.userInfo = action.payload;
+            })
+            .addCase(updateUserCupNoodles.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload as string;
             });
     },
 });
