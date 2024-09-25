@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ImageBackground, Image, TouchableOpacity, Platform } from 'react-native';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { View, Text, StyleSheet, ImageBackground, Image, TouchableOpacity } from 'react-native';
 import { NavigationProp, RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../navigation/RootNavigator';
-import { app } from '../../../firebaseConfig'; // Import the Firebase app
 import { LinearGradient } from 'expo-linear-gradient';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { AppDispatch, RootState } from '@/src/redux-toolkit/store';
-import { useDispatch } from 'react-redux';
 import { fetchUserById, updateUserCupNoodles } from '@/src/redux-toolkit/slices/userSlice';
 
 type UserInfoRouteProp = RouteProp<RootStackParamList, 'UserInfo'>;
@@ -23,7 +20,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ route }) => {
     const userInfo = useSelector((state: RootState) => state.user.userInfo);
     const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
     const [selectedCups, setSelectedCups] = useState<number>(0);
-    const updateStatus = useSelector((state: RootState) => state.user.status);
 
     const handlePress = (index: number) => {
         setSelectedIndices(prevIndices =>
@@ -38,9 +34,13 @@ const UserInfo: React.FC<UserInfoProps> = ({ route }) => {
     };
 
     const handleGetNoodles = () => {
-        if (selectedCups > 0) {
-            dispatch(updateUserCupNoodles({ userId, cupsToBuy: selectedCups }));
+        if (userInfo && userInfo.cupNoodles > 0) {
+            if (selectedCups > 0) {
+                dispatch(updateUserCupNoodles({ userId, cupsToBuy: selectedCups }));
+            }
             navigation.navigate('Done');
+        } else {
+            navigation.navigate('Home');
         }
     };
 
@@ -58,6 +58,39 @@ const UserInfo: React.FC<UserInfoProps> = ({ route }) => {
         );
     }
 
+    const renderNoodleOption = (index: number, imageSource: any) => {
+        const availableCount = userInfo.cupNoodles;
+
+        return (
+            <View style={styles.column}>
+                {index < availableCount ? (
+                    <TouchableOpacity onPress={() => handlePress(index)}>
+                        <View style={styles.imageContainer}>
+                            {selectedIndices.includes(index) && (
+                                <Image
+                                    source={require('../../../assets/image/choise.png')}
+                                    style={[styles.choice, { zIndex: 1 }]}
+                                    resizeMode="contain"
+                                />
+                            )}
+                            <Image
+                                source={imageSource}
+                                style={[styles.noodle, { zIndex: 2 }]}
+                                resizeMode="contain"
+                            />
+                        </View>
+                    </TouchableOpacity>
+                ) : (
+                    <Image
+                        source={require('../../../assets/image/unavailable.png')}
+                        style={styles.unavailableNoodle}
+                        resizeMode="contain"
+                    />
+                )}
+            </View>
+        );
+    };
+
     return (
         <ImageBackground
             source={require('../../../assets/image/bg.png')}
@@ -70,7 +103,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ route }) => {
                     style={styles.logo}
                     resizeMode="contain"
                 />
-                <Text style={styles.welcomeText}>infomation</Text>
+                <Text style={styles.welcomeText}>Thông tin</Text>
             </View>
             <View style={styles.wrapper}>
                 <View style={styles.whiteBorder}>
@@ -84,10 +117,10 @@ const UserInfo: React.FC<UserInfoProps> = ({ route }) => {
                                 />
                             </View>
                             <View style={styles.column}>
-                                <Text style={styles.infoBold}>Tên:</Text>
-                                <Text style={styles.infoBold}>Ngày sinh:</Text>
-                                <Text style={styles.infoBold}>Giới tính:</Text>
-                                <Text style={styles.infoBold}>Phòng ban:</Text>
+                                <Text style={styles.infoBold}>Full name:</Text>
+                                <Text style={styles.infoBold}>Birthday:</Text>
+                                <Text style={styles.infoBold}>Gender:</Text>
+                                <Text style={styles.infoBold}>Department:</Text>
                             </View>
                             <View style={styles.column}>
                                 <Text style={styles.info}>{userInfo.fullName}</Text>
@@ -100,62 +133,9 @@ const UserInfo: React.FC<UserInfoProps> = ({ route }) => {
                 </View>
 
                 <View style={styles.infomation}>
-                    <View style={styles.column}>
-                        <TouchableOpacity onPress={() => handlePress(0)}>
-                            <View style={styles.imageContainer}>
-                                {selectedIndices.includes(0) && (
-                                    <Image
-                                        source={require('../../../assets/image/choise.png')}
-                                        style={[styles.choice, { zIndex: 1 }]}
-                                        resizeMode="contain"
-                                    />
-                                )}
-                                <Image
-                                    source={require('../../../assets/image/Group.png')}
-                                    style={[styles.noodle, { zIndex: 2 }]}
-                                    resizeMode="contain"
-                                />
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-
-                    <View style={styles.column}>
-                        <TouchableOpacity onPress={() => handlePress(1)}>
-                            <View style={styles.imageContainer}>
-                                {selectedIndices.includes(1) && (
-                                    <Image
-                                        source={require('../../../assets/image/choise.png')}
-                                        style={[styles.choice, { zIndex: 1 }]}
-                                        resizeMode="contain"
-                                    />
-                                )}
-                                <Image
-                                    source={require('../../../assets/image/Group02.png')}
-                                    style={[styles.noodle, { zIndex: 2 }]}
-                                    resizeMode="contain"
-                                />
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-
-                    <View style={styles.column}>
-                        <TouchableOpacity onPress={() => handlePress(2)}>
-                            <View style={styles.imageContainer}>
-                                {selectedIndices.includes(2) && (
-                                    <Image
-                                        source={require('../../../assets/image/choise.png')}
-                                        style={[styles.choice, { zIndex: 1 }]}
-                                        resizeMode="contain"
-                                    />
-                                )}
-                                <Image
-                                    source={require('../../../assets/image/Group03.png')}
-                                    style={[styles.noodle, { zIndex: 2 }]}
-                                    resizeMode="contain"
-                                />
-                            </View>
-                        </TouchableOpacity>
-                    </View>
+                    {renderNoodleOption(0, require('../../../assets/image/Group.png'))}
+                    {renderNoodleOption(1, require('../../../assets/image/Group02.png'))}
+                    {renderNoodleOption(2, require('../../../assets/image/Group03.png'))}
                 </View>
             </View>
 
@@ -164,7 +144,25 @@ const UserInfo: React.FC<UserInfoProps> = ({ route }) => {
                     <Text style={styles.cupNoodles}>{userInfo.cupNoodles}</Text>
                     <Text style={styles.grayText}> cups of noodles left this month</Text>
                 </Text>
-                <TouchableOpacity style={styles.button} onPress={handleGetNoodles}>
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={handleGetNoodles} // Gọi hàm này mỗi khi nhấn nút
+                >
+                    <LinearGradient
+                        colors={['#FFB706', '#FF7506']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0, y: 1 }}
+                        style={styles.gradient}
+                    >
+                        <Text style={styles.buttonText}>
+                            {userInfo.cupNoodles > 0 ? 'Get your noodles' : 'Come back next month'}
+                        </Text>
+                    </LinearGradient>
+                </TouchableOpacity>
+                {/* <TouchableOpacity
+                    style={styles.button}
+                    onPress={handleGetNoodles}
+                >
                     <LinearGradient
                         colors={['#FFB706', '#FF7506']}
                         start={{ x: 0, y: 0 }}
@@ -173,11 +171,12 @@ const UserInfo: React.FC<UserInfoProps> = ({ route }) => {
                     >
                         <Text style={styles.buttonText}>Get your noodles</Text>
                     </LinearGradient>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
         </ImageBackground>
     );
 };
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -243,7 +242,6 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
     },
-
     welcomeText: {
         fontSize: 35,
         fontWeight: 'bold',
@@ -285,6 +283,10 @@ const styles = StyleSheet.create({
         position: 'relative',
         justifyContent: 'center',  // Căn giữa theo chiều dọc
         alignItems: 'center',
+    },
+    unavailableNoodle: {
+        height: 110,
+        alignSelf: 'center',
     },
 });
 
