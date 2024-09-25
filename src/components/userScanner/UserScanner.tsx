@@ -1,6 +1,5 @@
-// src/components/userScanner/UserScanner.tsx
 import React from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Button, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { fetchUserById } from '../../redux-toolkit/slices/userSlice';
 import { AppDispatch } from '../../redux-toolkit/store';
@@ -8,17 +7,17 @@ import { CameraView } from 'expo-camera';
 import useUserScanner from '../../hook/useUserScanner';
 
 interface UserScannerProps {
-    onScanSuccess: (userId: string) => void;
+    style?: ViewStyle;
+    onScanSuccess: (data: string) => void;
 }
 
-const UserScanner: React.FC<UserScannerProps> = ({ onScanSuccess }) => {
+const UserScanner: React.FC<UserScannerProps> = ({ style, onScanSuccess }) => {
     const {
         facing,
         permission,
         requestPermission,
         scanned,
         setScanned,
-        toggleCameraFacing,
     } = useUserScanner();
     const dispatch = useDispatch<AppDispatch>();
 
@@ -28,7 +27,7 @@ const UserScanner: React.FC<UserScannerProps> = ({ onScanSuccess }) => {
 
     if (!permission.granted) {
         return (
-            <View style={styles.container}>
+            <View style={[styles.container, style]}>
                 <Text style={styles.message}>Chúng tôi cần quyền truy cập camera để quét mã</Text>
                 <Button onPress={requestPermission} title="Cấp quyền" />
             </View>
@@ -36,30 +35,26 @@ const UserScanner: React.FC<UserScannerProps> = ({ onScanSuccess }) => {
     }
 
     const handleBarcodeScanned = ({ data }: { data: string }) => {
-        console.log("QR Code Scanned: ", data);  // Kiểm tra dữ liệu của mã QR
+        console.log("QR Code Scanned: ", data);
         setScanned(true);
         dispatch(fetchUserById(data));
-        onScanSuccess(data); // Gọi hàm onScanSuccess từ props
+        onScanSuccess(data);
     };
 
     return (
-        <View style={styles.container}>
-            <CameraView
-                style={styles.camera}
-                facing={facing}
-                onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
-            >
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-                        <Text style={styles.text}>Đổi camera</Text>
+        <View style={[styles.container]}>
+            <View style={styles.cameraContainer}>
+                <CameraView
+                    style={styles.camera}
+                    facing={facing}
+                    onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
+                />
+                {scanned && (
+                    <TouchableOpacity style={styles.scanAgainButton} onPress={() => setScanned(false)}>
+                        <Text style={styles.scanAgainText}>Quét lại</Text>
                     </TouchableOpacity>
-                </View>
-            </CameraView>
-            {scanned && (
-                <TouchableOpacity style={styles.scanAgainButton} onPress={() => setScanned(false)}>
-                    <Text style={styles.scanAgainText}>Quét lại</Text>
-                </TouchableOpacity>
-            )}
+                )}
+            </View>
         </View>
     );
 };
@@ -69,38 +64,26 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#fff', // Đảm bảo nền trắng để chữ dễ đọc
+    },
+    cameraContainer: {
+        borderWidth: 15, // Độ dày viền trắng
+        borderColor: '#fff', // Màu viền trắng
+        borderRadius: 10,
+        width: 100, // Chiều rộng của camera
+        height: 130, // Chiều cao của camera
+        justifyContent: 'center', // Căn giữa camera
+        overflow: 'hidden', // Đảm bảo không có gì ra ngoài viền
     },
     message: {
         textAlign: 'center',
-        paddingBottom: 20, // Tăng khoảng cách dưới
-        fontSize: 18, // Đảm bảo kích thước chữ đủ lớn để dễ đọc
-        color: '#333', // Đảm bảo màu chữ đủ tương phản với nền
+        paddingBottom: 20,
+        fontSize: 18,
+        color: '#333',
     },
     camera: {
         flex: 1,
-        width: '100%',
-        maxHeight: '70%', // Giới hạn chiều cao của camera
-        aspectRatio: 1, // Đảm bảo tỷ lệ khung hình của camera
-    },
-    buttonContainer: {
-        position: 'absolute',
-        bottom: 20,
-        left: 0,
-        right: 0,
-        flexDirection: 'row',
-        justifyContent: 'center',
-    },
-    button: {
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 5,
-    },
-    text: {
-        fontSize: 18,
-        color: 'white',
-        fontWeight: 'bold',
+        width: '100%', // Chiều rộng của camera
+        height: '100%', // Chiều cao của camera
     },
     scanAgainButton: {
         position: 'absolute',
