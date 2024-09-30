@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Button, StyleSheet, ViewStyle } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { fetchUserById } from '../../redux-toolkit/slices/userSlice';
 import { AppDispatch } from '../../redux-toolkit/store';
@@ -9,17 +9,19 @@ import useUserScanner from '../../hook/useUserScanner';
 interface UserScannerProps {
     style?: ViewStyle;
     onScanSuccess: (data: string) => void;
+    hasError: boolean; // Prop to determine if there is an error
 }
 
-const UserScanner: React.FC<UserScannerProps> = ({ style, onScanSuccess }) => {
-    const {
-        facing,
-        permission,
-        requestPermission,
-        scanned,
-        setScanned,
-    } = useUserScanner();
+const UserScanner: React.FC<UserScannerProps> = ({ style, onScanSuccess, hasError }) => {
+    const { facing, permission, requestPermission, scanned, setScanned } = useUserScanner();
     const dispatch = useDispatch<AppDispatch>();
+
+    // Reset the scanned state when there is an error to allow scanning again
+    useEffect(() => {
+        if (hasError) {
+            setScanned(false); // Reset the scanner to scan again if there's an error
+        }
+    }, [hasError]);
 
     if (!permission) {
         return <View />;
@@ -28,7 +30,6 @@ const UserScanner: React.FC<UserScannerProps> = ({ style, onScanSuccess }) => {
     if (!permission.granted) {
         return (
             <View style={[styles.container, style]}>
-                <Text style={styles.message}>Chúng tôi cần quyền truy cập camera để quét mã</Text>
                 <Button onPress={requestPermission} title="Cấp quyền" />
             </View>
         );
@@ -39,6 +40,9 @@ const UserScanner: React.FC<UserScannerProps> = ({ style, onScanSuccess }) => {
         setScanned(true);
         dispatch(fetchUserById(data));
         onScanSuccess(data);
+
+        // Automatically reset scanned state after 2 seconds
+        setTimeout(() => setScanned(false), 2000);
     };
 
     return (
@@ -49,11 +53,6 @@ const UserScanner: React.FC<UserScannerProps> = ({ style, onScanSuccess }) => {
                     facing={facing}
                     onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
                 />
-                {scanned && (
-                    <TouchableOpacity style={styles.scanAgainButton} onPress={() => setScanned(false)}>
-                        <Text style={styles.scanAgainText}>Quét lại</Text>
-                    </TouchableOpacity>
-                )}
             </View>
         </View>
     );
@@ -66,37 +65,18 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     cameraContainer: {
-        borderWidth: 15, // Độ dày viền trắng
-        borderColor: '#fff', // Màu viền trắng
+        borderWidth: 15,
+        borderColor: '#fff',
         borderRadius: 10,
-        width: 100, // Chiều rộng của camera
-        height: 130, // Chiều cao của camera
-        justifyContent: 'center', // Căn giữa camera
-        overflow: 'hidden', // Đảm bảo không có gì ra ngoài viền
-    },
-    message: {
-        textAlign: 'center',
-        paddingBottom: 20,
-        fontSize: 18,
-        color: '#333',
+        width: 100,
+        height: 130,
+        justifyContent: 'center',
+        overflow: 'hidden',
     },
     camera: {
         flex: 1,
-        width: '100%', // Chiều rộng của camera
-        height: '100%', // Chiều cao của camera
-    },
-    scanAgainButton: {
-        position: 'absolute',
-        bottom: 20,
-        backgroundColor: '#007BFF',
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 5,
-    },
-    scanAgainText: {
-        color: 'white',
-        fontSize: 18,
-        fontWeight: 'bold',
+        width: '100%',
+        height: '100%',
     },
 });
 

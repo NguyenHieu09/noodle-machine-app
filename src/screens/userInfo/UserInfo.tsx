@@ -159,19 +159,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ route }) => {
                         </Text>
                     </LinearGradient>
                 </TouchableOpacity>
-                {/* <TouchableOpacity
-                    style={styles.button}
-                    onPress={handleGetNoodles}
-                >
-                    <LinearGradient
-                        colors={['#FFB706', '#FF7506']}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 0, y: 1 }}
-                        style={styles.gradient}
-                    >
-                        <Text style={styles.buttonText}>Get your noodles</Text>
-                    </LinearGradient>
-                </TouchableOpacity> */}
+
             </View>
         </ImageBackground>
     );
