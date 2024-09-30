@@ -1,3 +1,4 @@
+import ScanIcon from '@/src/svg/ScanIcon';
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 
@@ -21,7 +22,8 @@ const Error: React.FC = () => {
             />
 
             <View style={styles.scan}>
-                <Text style={styles.message}>Follow the arrow to scan card</Text>
+                <ScanIcon width={35} height={35} fill="#8B0000" />
+                <Text style={styles.text}>Follow the arrow to scan card</Text>
             </View>
         </View>
     );
@@ -44,12 +46,14 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#c0392b',
         textTransform: 'uppercase',
-        marginBottom: 30,
+        marginBottom: 20,
     },
     message: {
         fontSize: 18,
         color: '#980000',
-        fontWeight: '800'
+        fontWeight: '800',
+        marginBottom: 20,
+
     },
     instruction: {
         fontSize: 16,
@@ -60,7 +64,7 @@ const styles = StyleSheet.create({
         height: 150,
     },
     button: {
-        backgroundColor: '#ff7f50', // Màu nền của nút  
+        backgroundColor: '#D86643', // Màu nền của nút  
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 5,
@@ -71,8 +75,17 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     scan: {
-
-    }
+        flexDirection: 'row',
+        alignItems: 'center',
+        // padding: 10,
+        borderRadius: 5,
+    },
+    text: {
+        fontSize: 18,
+        color: '#980000',
+        fontWeight: '800',
+        marginLeft: 5,
+    },
 });
 
 export default Error;

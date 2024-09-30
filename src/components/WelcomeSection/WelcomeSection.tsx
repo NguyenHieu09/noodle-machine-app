@@ -1,4 +1,5 @@
 // src/components/WelcomeSection.tsx
+import ScanIcon from '@/src/svg/ScanIcon';
 import React from 'react';
 import { View, Image, Text, StyleSheet } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -26,7 +27,10 @@ const WelcomeSection: React.FC = () => {
                     </View>
                 </View>
             </View>
-            <Text style={styles.scanText}>Follow the arrow to scan card</Text>
+            <View style={styles.scan}>
+                <ScanIcon width={35} height={35} fill="#8B0000" />
+                <Text style={styles.text}>Follow the arrow to scan card</Text>
+            </View>
         </View>
     );
 };
@@ -86,16 +90,21 @@ const styles = StyleSheet.create({
         fontWeight: 'bold', // Chữ đậm  
         color: '#c0392b', // Màu chữ đỏ  
         textTransform: 'uppercase', // Chữ in hoa  
-        marginBottom: 30, // Khoảng cách dưới cùng
+        marginBottom: 40, // Khoảng cách dưới cùng
     },
-    scanText: {
+    scan: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        // padding: 10,
+        borderRadius: 5,
         marginTop: 40,
-        fontSize: 12, // Kích thước chữ  
-        fontWeight: '900', // Chữ đậm  
-        color: '#c0392b', // Màu chữ đỏ  
-        textTransform: 'uppercase', // Chữ in hoa  
-        marginBottom: 30, // Khoảng cách dưới cùng
-    }
+    },
+    text: {
+        fontSize: 18,
+        color: '#980000',
+        fontWeight: '800',
+        marginLeft: 5,
+    },
 });
 
 export default WelcomeSection;
