@@ -14,6 +14,50 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [hasError, setHasError] = useState(false); // State để quản lý trạng thái lỗi
 
+  // const handleScanSuccess = async (data: string) => {
+  //   setLoading(true);
+  //   setHasError(false); // Reset trạng thái lỗi trước khi bắt đầu quét
+  //   try {
+  //     const qrData = JSON.parse(data);
+
+  //     // Lấy dữ liệu từ Firebase dựa trên thông tin từ QR code
+  //     const firestore = getFirestore(app);
+  //     const usersRef = collection(firestore, 'users');
+  //     const q = query(
+  //       usersRef,
+  //       where('fullName', '==', qrData.fullName),
+  //       where('birthday', '==', qrData.birthday),
+  //       where('gender', '==', qrData.gender),
+  //       where('department', '==', qrData.department)
+  //     );
+  //     const querySnapshot = await getDocs(q);
+
+  //     if (!querySnapshot.empty) {
+  //       const userDoc = querySnapshot.docs[0];
+  //       const firebaseData = userDoc.data();
+
+  //       // So sánh dữ liệu
+  //       if (
+  //         qrData.fullName === firebaseData.fullName &&
+  //         qrData.birthday === firebaseData.birthday &&
+  //         qrData.gender === firebaseData.gender &&
+  //         qrData.department === firebaseData.department
+  //       ) {
+  //         navigation.navigate('UserInfo', { userId: userDoc.id });
+  //       } else {
+  //         setHasError(true); // Cập nhật trạng thái lỗi
+  //       }
+  //     } else {
+  //       setHasError(true); // Cập nhật trạng thái lỗi
+  //     }
+  //   } catch (error) {
+  //     console.error('Error processing QR data:', error);
+  //     setHasError(true); // Cập nhật trạng thái lỗi
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleScanSuccess = async (data: string) => {
     setLoading(true);
     setHasError(false); // Reset trạng thái lỗi trước khi bắt đầu quét
@@ -43,7 +87,12 @@ const Home: React.FC = () => {
           qrData.gender === firebaseData.gender &&
           qrData.department === firebaseData.department
         ) {
-          navigation.navigate('UserInfo', { userId: userDoc.id });
+          // Kiểm tra nếu cupNoodles = 0
+          if (firebaseData.cupNoodles === 0) {
+            navigation.navigate('OutOfNoodlesScreen');
+          } else {
+            navigation.navigate('UserInfo', { userId: userDoc.id });
+          }
         } else {
           setHasError(true); // Cập nhật trạng thái lỗi
         }

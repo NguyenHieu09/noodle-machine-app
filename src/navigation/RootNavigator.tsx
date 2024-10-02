@@ -7,6 +7,9 @@ import UserInfo from '../screens/userInfo/UserInfo';
 // import AnimatedArrow from '../screens/home/AnimatedArrow';
 import Done from '../screens/done/Done';
 import Error from '../components/Error/Error';
+import SquareOverlay from '../components/Video/VideoComponent';
+import OutOfNoodlesScreen from '../screens/OutOfNoodles/OutOfNoodlesScreen';
+// import VideoComponent from '../components/Video/VideoComponent';
 // import AnimatedArrow from '../screens/home/AnimatedArrow';
 
 export type RootStackParamList = {
@@ -14,7 +17,9 @@ export type RootStackParamList = {
     UserInfo: { userId: string };
     AnimatedArrow: undefined;
     Done: undefined,
-    Error: undefined
+    Error: undefined,
+    SquareOverlay: undefined,
+    OutOfNoodlesScreen: undefined,
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -33,11 +38,11 @@ const RootNavigator: React.FC = () => {
                     component={UserInfo}
                     options={{ headerShown: false }}
                 />
-                {/* <Stack.Screen
-                    name="AnimatedArrow"
-                    component={AnimatedArrow}
+                <Stack.Screen
+                    name="OutOfNoodlesScreen"
+                    component={OutOfNoodlesScreen}
                     options={{ headerShown: false }}
-                /> */}
+                />
                 <Stack.Screen
                     name="Done"
                     component={Done}

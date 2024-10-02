@@ -106,8 +106,33 @@ const UserInfo: React.FC<UserInfoProps> = ({ route }) => {
                 <Text style={styles.welcomeText}>Thông tin</Text>
             </View>
             <View style={styles.wrapper}>
-                <View style={styles.whiteBorder}>
+                {/* <View style={styles.whiteBorder}>
                     <View style={styles.outerBorder}>
+                        <View style={styles.infomation}>
+                            <View style={styles.column}>
+                                <Image
+                                    source={require('../../../assets/image/Frame 3.png')}
+                                    style={styles.avatar}
+                                    resizeMode="contain"
+                                />
+                            </View>
+                            <View style={styles.column}>
+                                <Text style={styles.infoBold}>Full name:</Text>
+                                <Text style={styles.infoBold}>Birthday:</Text>
+                                <Text style={styles.infoBold}>Gender:</Text>
+                                <Text style={styles.infoBold}>Department:</Text>
+                            </View>
+                            <View style={styles.column}>
+                                <Text style={styles.info}>{userInfo.fullName}</Text>
+                                <Text style={styles.info}>{userInfo.birthday}</Text>
+                                <Text style={styles.info}>{userInfo.gender}</Text>
+                                <Text style={styles.info}>{userInfo.department}</Text>
+                            </View>
+                        </View>
+                    </View>
+                </View> */}
+                <View style={styles.whiteSquare}>
+                    <View style={styles.yellowSquare}>
                         <View style={styles.infomation}>
                             <View style={styles.column}>
                                 <Image
@@ -184,7 +209,7 @@ const styles = StyleSheet.create({
     },
     outerBorder: {
         borderWidth: 1,
-        borderColor: '#711F1F',
+        // borderColor: '#711F1F',
         borderRadius: 8,
     },
     infomation: {
@@ -275,6 +300,23 @@ const styles = StyleSheet.create({
     unavailableNoodle: {
         height: 110,
         alignSelf: 'center',
+    },
+    whiteSquare: {
+
+        padding: 5,
+        backgroundColor: '#FFFFFF', // White color
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10,
+        margin: 20
+    },
+    yellowSquare: {
+
+        backgroundColor: '#FFCC00', // Yellow color
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10, // Adjust the border radius as needed
+        borderWidth: 1,
     },
 });
 

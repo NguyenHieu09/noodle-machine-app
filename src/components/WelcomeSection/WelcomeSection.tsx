@@ -13,9 +13,8 @@ const WelcomeSection: React.FC = () => {
                 resizeMode="contain"
             />
             <Text style={styles.welcomeText}>WELCOME</Text>
-
-            <View style={styles.outerBorder}>
-                <View style={styles.innerBorder}>
+            <View style={styles.whiteSquare}>
+                <View style={styles.yellowSquare}>
                     <View style={styles.videoContainer}>
                         <Image
                             source={require('../../../assets/image/image 1.png')}
@@ -27,6 +26,7 @@ const WelcomeSection: React.FC = () => {
                     </View>
                 </View>
             </View>
+
             <View style={styles.scan}>
                 <ScanIcon width={35} height={35} fill="#8B0000" />
                 <Text style={styles.text}>Follow the arrow to scan card</Text>
@@ -104,6 +104,23 @@ const styles = StyleSheet.create({
         color: '#980000',
         fontWeight: '800',
         marginLeft: 5,
+    },
+    whiteSquare: {
+        width: 270, // Kích thước hình ảnh  
+        height: 170, // Kích thước hình ảnh  
+        backgroundColor: '#FFFFFF', // White color
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10 // Border width
+    },
+    yellowSquare: {
+        width: 250,
+        height: 150,
+        backgroundColor: '#FFCC00', // Yellow color
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10,
+        borderWidth: 1,
     },
 });
 
