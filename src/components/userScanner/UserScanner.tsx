@@ -60,9 +60,9 @@ const UserScanner: React.FC<UserScannerProps> = ({ style, onScanSuccess, hasErro
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        flex: 2,
+        alignItems: 'flex-end',
+        // backgroundColor: '#fff',
     },
     cameraContainer: {
         borderWidth: 15,
@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
         width: 100,
         height: 130,
         justifyContent: 'center',
+        // alignItems: 'center',
         overflow: 'hidden',
     },
     camera: {
