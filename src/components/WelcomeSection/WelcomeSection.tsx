@@ -1,10 +1,22 @@
-// src/components/WelcomeSection.tsx
-import ScanIcon from '@/src/svg/ScanIcon';
-import React from 'react';
-import { View, Image, Text, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Image, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { Video } from 'expo-av';
+import ScanIcon from '@/src/svg/ScanIcon';
 
 const WelcomeSection: React.FC = () => {
+    const [isVideoVisible, setIsVideoVisible] = useState(false);
+
+    const handleImagePress = () => {
+        setIsVideoVisible(true);
+    };
+
+    const handlePlaybackStatusUpdate = (status: any) => {
+        if (status.didJustFinish) {
+            setIsVideoVisible(false);
+        }
+    };
+
     return (
         <View style={styles.container}>
             <Image
@@ -15,15 +27,32 @@ const WelcomeSection: React.FC = () => {
             <Text style={styles.welcomeText}>WELCOME</Text>
             <View style={styles.whiteSquare}>
                 <View style={styles.yellowSquare}>
-                    <View style={styles.videoContainer}>
-                        <Image
-                            source={require('../../../assets/image/image 1.png')}
-                            style={styles.video}
-                        />
-                        <View style={styles.playButton}>
-                            <MaterialIcons name="play-arrow" size={40} color="white" />
+                    {isVideoVisible ? (
+                        <View style={styles.videoContainer}>
+                            <Video
+                                source={{ uri: 'https://www.w3schools.com/html/mov_bbb.mp4' }}
+                                rate={1.0}
+                                volume={1.0}
+                                isMuted={false}
+                                resizeMode="cover"
+                                shouldPlay
+                                style={styles.video}
+                                onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
+                            />
                         </View>
-                    </View>
+                    ) : (
+                        <TouchableOpacity onPress={handleImagePress}>
+                            <View style={styles.videoContainer}>
+                                <Image
+                                    source={require('../../../assets/image/image 1.png')}
+                                    style={styles.video}
+                                />
+                                <View style={styles.playButton}>
+                                    <MaterialIcons name="play-arrow" size={40} color="white" />
+                                </View>
+                            </View>
+                        </TouchableOpacity>
+                    )}
                 </View>
             </View>
 
