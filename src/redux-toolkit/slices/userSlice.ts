@@ -2,30 +2,26 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { firestore } from '../../../firebaseConfig';
 import { collection, getDocs, query, where, updateDoc, doc, getDoc } from 'firebase/firestore';
 
-// Định nghĩa kiểu dữ liệu cho thông tin người dùng
 interface UserInfo {
     fullName: string;
     birthday: string;
     gender: string;
     department: string;
-    cupNoodles: number; // Số ly mì còn lại của người dùng
+    cupNoodles: number; // Số ly mì còn lại trong từng tháng của người dùng
 }
 
-// Định nghĩa kiểu dữ liệu cho trạng thái của người dùng
 interface UserState {
     userInfo: UserInfo | null;
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     error: string | null;
 }
 
-// Đặt giá trị mặc định cho trạng thái người dùng
 const initialState: UserState = {
     userInfo: null,
     status: 'idle',
     error: null,
 };
 
-// Tạo một async thunk để lấy thông tin người dùng từ Firestore
 export const fetchUserById = createAsyncThunk(
     'user/fetchUserById',
     async (userId: string, { rejectWithValue }) => {
@@ -49,7 +45,6 @@ export const fetchUserById = createAsyncThunk(
     }
 );
 
-// Tạo một async thunk để cập nhật số ly mì sau khi mua
 export const updateUserCupNoodles = createAsyncThunk(
     'user/updateUserCupNoodles',
     async ({ userId, cupsToBuy }: { userId: string; cupsToBuy: number }, { rejectWithValue }) => {
@@ -80,7 +75,6 @@ export const updateUserCupNoodles = createAsyncThunk(
     }
 );
 
-// Tạo slice cho người dùng
 const userSlice = createSlice({
     name: 'user',
     initialState,
