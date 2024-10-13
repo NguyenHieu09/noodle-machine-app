@@ -38,10 +38,7 @@ React native, Expo, Firebase, Redux
 
 ## Video demo
 
-<video width="600" controls>
-  <source src="./assets/video.mp4" type="video/mp4">
-  Trình duyệt của bạn không hỗ trợ thẻ video.
-</video>
+![Demo Video](./assets/video.gif)
 
 ## Authors
 
