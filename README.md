@@ -8,7 +8,7 @@
 ## 2. Chức năng người dùng
 - **Đăng nhập bằng cách quét mã QR**: đăng nhập sử dụng thư viện react-native-camera để quét mã QR, giúp thu thập thông tin cá nhân của người dùng. Sau khi quét, dữ liệu sẽ được đối chiếu với Firebase.
 - **Hiển thị thông tin người dùng và chọn số lượng mì**: Sau khi xác thực, ứng dụng hiển thị thông tin cá nhân và số lượng mì còn lại. Người dùng có thể chọn số mì muốn nhận, và dữ liệu sẽ tự động cập nhật và lưu trữ ở Firebase.
-## Tech Stack
+## Công nghệ sử dụng
 React native, Expo, Firebase, Redux
 
 ## Yêu Cầu Hệ Thống  
